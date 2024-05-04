@@ -1,0 +1,58 @@
+{
+  "name": "lanchonete",
+  "version": "1.0.0",
+  "description": "Projeto relacionado a especialização em Arquitetura de Software na FIAP",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "node build/server.js",
+    "build": "tsup src --out-dir build",
+    "bd": "npx prisma migrate deploy",
+    "bd:dev": "npx prisma migrate dev",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "docker": "docker compose up --build --force-recreate",
+    "swagger": "npx swagger-jsdoc -d tooling/swagger/parameters.yaml -o tooling/swagger/swagger.json src/app.ts",
+    "prisma:generate": "npx prisma generate",
+    "start:prod": "node build/server",
+    "start:migrate:prod": "prisma migrate deploy && npm run start:prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teamG11/lanchonete.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/teamG11/lanchonete/issues"
+  },
+  "homepage": "https://github.com/teamG11/lanchonete#readme",
+  "dependencies": {
+    "@prisma/client": "5.4.2",
+    "cors": "2.8.5",
+    "dotenv": "16.3.1",
+    "express": "4.19.2",
+    "zod": "3.22.4"
+  },
+  "devDependencies": {
+    "@rocketseat/eslint-config": "2.1.0",
+    "@types/cors": "2.8.14",
+    "@types/dotenv": "8.2.0",
+    "@types/express": "4.17.19",
+    "@types/node": "20.8.4",
+    "@types/swagger-jsdoc": "6.0.2",
+    "@vitest/coverage-v8": "0.34.6",
+    "eslint": "8.51.0",
+    "prisma": "5.4.2",
+    "tsup": "7.2.0",
+    "tsx": "3.13.0",
+    "typescript": "5.2.2",
+    "vite-tsconfig-paths": "4.2.1",
+    "vitest": "0.34.6"
+  }
+}
