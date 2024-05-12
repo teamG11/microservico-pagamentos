@@ -18,6 +18,6 @@ export class Pedido {
     this.valor_final = data.valor_final;
     this.tipo_pagamento = data.tipo_pagamento;
     this.status = data.status;
-    this.status_pagamento = data.status_pagamento
+    this.status_pagamento = data.status_pagamento;
   }
 }

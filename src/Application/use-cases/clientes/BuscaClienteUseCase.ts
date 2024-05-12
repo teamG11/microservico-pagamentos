@@ -3,24 +3,25 @@ import { RegistroNaoEncontradoError } from "../../errors/RegistroNaoEncontradoEr
 import { IClienteGateway } from "@/Interfaces/Gataways/ClienteGateway";
 
 export interface BuscaClienteRequest {
-	cpf: string;
+  cpf: string;
 }
 
 export interface BuscaClienteResponse {
-	cliente: Cliente;
+  cliente: Cliente;
 }
 
 export class BuscaClienteUseCase {
+  constructor(private clienteGateway: IClienteGateway) {}
 
-	constructor(private clienteGateway: IClienteGateway) { }
+  async executarAsync({
+    cpf,
+  }: BuscaClienteRequest): Promise<BuscaClienteResponse> {
+    const cliente = await this.clienteGateway.findByCPFAsync(cpf);
 
-	async executarAsync({ cpf }: BuscaClienteRequest): Promise<BuscaClienteResponse> {
-		const cliente = await this.clienteGateway.findByCPFAsync(cpf);
+    if (!cliente) {
+      throw new RegistroNaoEncontradoError();
+    }
 
-		if (!cliente) {
-			throw new RegistroNaoEncontradoError();
-		}
-
-		return { cliente };
-	}
+    return { cliente };
+  }
 }

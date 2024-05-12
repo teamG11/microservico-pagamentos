@@ -6,44 +6,45 @@ import { BuscaClienteUseCaseFactory } from "@/Application/use-cases-factories/cl
 import { IClienteRepository } from "../Repositories/IClienteRepository";
 
 export class ClienteController {
-	
-	constructor(private clienteRepository: IClienteRepository) { }
+  constructor(private clienteRepository: IClienteRepository) {}
 
-	async criar(request: Request, response: Response, next: NextFunction) {
-		try {
-			const dados = request.body;
+  async criar(request: Request, response: Response, next: NextFunction) {
+    try {
+      const dados = request.body;
 
-			const createBodySchema = z.object({
-				nome: z.string().min(3).max(255),
-				sobrenome: z.string().min(3).max(255).optional(),
-				cpf: z.string().min(11).max(11),
-			});
+      const createBodySchema = z.object({
+        nome: z.string().min(3).max(255),
+        sobrenome: z.string().min(3).max(255).optional(),
+        cpf: z.string().min(11).max(11),
+      });
 
-			const clienteToCreate = createBodySchema.parse(dados);
-			const clienteGateway = new ClienteGateway(this.clienteRepository);
-			const criaClienteUseCase = CriaClienteUseCaseFactory(clienteGateway);
-			const { cliente } = await criaClienteUseCase.executarAsync({ ...clienteToCreate });
+      const clienteToCreate = createBodySchema.parse(dados);
+      const clienteGateway = new ClienteGateway(this.clienteRepository);
+      const criaClienteUseCase = CriaClienteUseCaseFactory(clienteGateway);
+      const { cliente } = await criaClienteUseCase.executarAsync({
+        ...clienteToCreate,
+      });
 
-			return response.status(201).send(cliente);
-		} catch (error) {
-			next(error);
-		}
-	}
+      return response.status(201).send(cliente);
+    } catch (error) {
+      next(error);
+    }
+  }
 
-	async buscar(request: Request, response: Response, next: NextFunction) {
-		try {
-			const paramsSchema = z.object({
-				cpf: z.string().min(11).max(11),
-			});
+  async buscar(request: Request, response: Response, next: NextFunction) {
+    try {
+      const paramsSchema = z.object({
+        cpf: z.string().min(11).max(11),
+      });
 
-			const { cpf } = paramsSchema.parse(request.params);
-			const clienteGateway = new ClienteGateway(this.clienteRepository);
-			const buscaClienteUseCase = BuscaClienteUseCaseFactory(clienteGateway);
+      const { cpf } = paramsSchema.parse(request.params);
+      const clienteGateway = new ClienteGateway(this.clienteRepository);
+      const buscaClienteUseCase = BuscaClienteUseCaseFactory(clienteGateway);
 
-			const { cliente } = await buscaClienteUseCase.executarAsync({ cpf });
-			return response.status(200).json(cliente);
-		} catch (error) {
-			next(error);
-		}
-	}
+      const { cliente } = await buscaClienteUseCase.executarAsync({ cpf });
+      return response.status(200).json(cliente);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

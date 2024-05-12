@@ -2,7 +2,7 @@ import { BuscaClienteUseCase } from "../../use-cases/clientes/BuscaClienteUseCas
 import { IClienteGateway } from "@/Interfaces/Gataways/ClienteGateway";
 
 export function BuscaClienteUseCaseFactory(clienteGateway: IClienteGateway) {
-	const buscaCliente = new BuscaClienteUseCase(clienteGateway);
+  const buscaCliente = new BuscaClienteUseCase(clienteGateway);
 
-	return buscaCliente;
+  return buscaCliente;
 }

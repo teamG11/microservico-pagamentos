@@ -1,5 +1,5 @@
 export enum StatusPagamento {
-    aguardando = "aguardando",
-    recebido = "recebido",
-    recusado = "recusado"
+  aguardando = "aguardando",
+  recebido = "recebido",
+  recusado = "recusado",
 }
