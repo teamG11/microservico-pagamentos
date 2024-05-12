@@ -6,7 +6,11 @@ const clienteRouter = Router();
 
 const clienteController = new ClienteController(new ClienteRepository());
 
-clienteRouter.post("", (req, res, next) => { clienteController.criar(req, res, next);});
-clienteRouter.get('/:cpf', (req, res, next) => { clienteController.buscar(req, res, next);});
+clienteRouter.post("", (req, res, next) => {
+  void clienteController.criar(req, res, next);
+});
+clienteRouter.get("/:cpf", (req, res, next) => {
+  void clienteController.buscar(req, res, next);
+});
 
 export { clienteRouter };

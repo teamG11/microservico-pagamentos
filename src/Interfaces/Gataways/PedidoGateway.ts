@@ -12,8 +12,7 @@ export interface IPedidoGateway {
 }
 
 export default class PedidoGateway implements IPedidoGateway {
-  
-  constructor(private pedidoRepository: IPedidoRepository) { }
+  constructor(private pedidoRepository: IPedidoRepository) {}
 
   createAsync(pedido: Pedido): Promise<Pedido> {
     return this.pedidoRepository.createAsync(pedido);
@@ -33,5 +32,4 @@ export default class PedidoGateway implements IPedidoGateway {
   findAllNaoFinalizadosAsync(): Promise<Pedido[]> {
     return this.pedidoRepository.findAllNaoFinalizadosAsync();
   }
-  
 }

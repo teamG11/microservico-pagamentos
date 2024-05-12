@@ -2,6 +2,6 @@ import { AtualizarPedidoUseCase } from "../../use-cases/pedidos/AtualizarPedidoU
 import { IPedidoGateway } from "@/Interfaces/Gataways/PedidoGateway";
 
 export function AtualizarPedidoUseCaseFactory(pedidoGateway: IPedidoGateway) {
-	const atualizarPedido = new AtualizarPedidoUseCase(pedidoGateway);
-	return atualizarPedido;
+  const atualizarPedido = new AtualizarPedidoUseCase(pedidoGateway);
+  return atualizarPedido;
 }

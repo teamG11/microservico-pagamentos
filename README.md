@@ -1,2 +1,7 @@
 # microservico-pagamento
-Responsável por operacionalizar a cobrança de um pedido, registrando a solicitação de pagamento, recebendo o retorno do processador de pagamento e atualizando o status do pedido.
+
+Responsável por
+    - operacionalizar a cobrança de um pedido
+    - registrar a solicitação de pagamento
+    - receber o retorno do processador de pagamento
+    - atualizar o status do pedido

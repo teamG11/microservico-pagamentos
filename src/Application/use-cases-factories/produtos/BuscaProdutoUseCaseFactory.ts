@@ -2,7 +2,7 @@ import { BuscaProdutoUseCase } from "../../use-cases/produtos/BuscaProdutoUseCas
 import { IProdutoGateway } from "@/Interfaces/Gataways/ProdutoGateway";
 
 export function BuscaProdutoUseCaseFactory(produtoGateway: IProdutoGateway) {
-	const useCase = new BuscaProdutoUseCase(produtoGateway);
+  const useCase = new BuscaProdutoUseCase(produtoGateway);
 
-	return useCase;
+  return useCase;
 }

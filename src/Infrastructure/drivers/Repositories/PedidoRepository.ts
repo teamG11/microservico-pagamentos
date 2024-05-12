@@ -4,14 +4,12 @@ import { IPedidoRepository } from "@/Interfaces/Repositories/IPedidoRepository";
 import { prisma } from "@/Infrastructure/lib/prisma";
 
 export default class PedidoRepository implements IPedidoRepository {
-  
   async createAsync(data: PedidoDomain): Promise<PedidoDomain> {
     const createdPedido = await prisma.pedido.create({ data });
     return createdPedido;
   }
 
   async updateAsync(data: PedidoDomain): Promise<PedidoDomain> {
-    
     const pedidoAtualizado = await prisma.pedido.update({
       where: { id: data.id },
       data: {
@@ -25,7 +23,10 @@ export default class PedidoRepository implements IPedidoRepository {
     return pedidoAtualizado;
   }
 
-  async updateStatusAsync(pedidoId: number, novoStatus: string): Promise<PedidoDomain> {
+  async updateStatusAsync(
+    pedidoId: number,
+    novoStatus: string
+  ): Promise<PedidoDomain> {
     const pedidoAtualizado = await prisma.pedido.update({
       where: { id: pedidoId },
       data: {
@@ -75,18 +76,18 @@ export default class PedidoRepository implements IPedidoRepository {
 
   async findAllNaoFinalizadosAsync(): Promise<PedidoDomain[]> {
     const pedido = await prisma.pedido.findMany({
-      where:{
-        NOT:{
-          status:{
-            equals: 'finalizado'
-          }
+      where: {
+        NOT: {
+          status: {
+            equals: "finalizado",
+          },
         },
       },
       orderBy: [
         {
-          created_at:'asc'
-        }
-      ]
+          created_at: "asc",
+        },
+      ],
     });
     return pedido;
   }
