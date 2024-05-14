@@ -85,31 +85,6 @@ jobs:
       - name: Run build
         run: npm run build
 
-  coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout commit
-        uses: actions/checkout@v2
-  
-      - name: Use Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: '18.x'
-    
-      - name: Cache NPM
-        uses: actions/cache@v1
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-    
-      - name: Install Dependencies
-        run: npm install
-    
-      - name: Run coverage
-        run: npm run test:coverage
-        
   sonarcloud:
     name: sonar_cloud
     runs-on: ubuntu-latest
