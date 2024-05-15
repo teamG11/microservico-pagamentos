@@ -4,6 +4,6 @@ export class Pagamento {
   constructor(
     public requestPayload: string,
     public responsePayload: string,
-    public webhookResponsePayload: string | null
+    public webhookResponsePayload: string | null = null
   ) {}
 }

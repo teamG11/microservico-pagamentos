@@ -1,14 +1,16 @@
-import { ApiError } from "@/Application/errors/ApiError";
 import { CriaPagamentoUseCaseFactory } from "@/Application/use-cases-factories/pagamentos/CriaPagamentoUseCaseFactory";
-import { CriaPedidoPagamentoUseCaseFactory } from "@/Application/use-cases-factories/pagamentos/CriaPedidoPagamentoUseCaseFactory";
-import { StatusPagamento } from "@/Domain/Enums/StatusPagamento";
 import { NextFunction, Request, Response } from "express";
 import { z } from "zod";
+import MercadoPagoGateway from "../Gateways/MercadoPagoGateway";
+import PagamentoGateway from "../Gateways/PagamentoGateway";
+import PedidoPagamentoGateway from "../Gateways/PedidoPagamentoGateway";
 import { IPagamentoRepository } from "../Repositories/IPagamentoRepository";
 import { IPedidoPagamentoRepository } from "../Repositories/IPedidoPagamentoRepository";
+import { IMercadoPagoService } from "../Services/IMercadoPagoService";
 
 class PagamentoController {
   constructor(
+    private mercadoPagoService: IMercadoPagoService,
     private pagamentoRepository: IPagamentoRepository,
     private pedidoPagamentoRepository: IPedidoPagamentoRepository
   ) {}
@@ -28,27 +30,16 @@ class PagamentoController {
       const responseMercadoPago = { id: 123 };
 
       const criaPagamento = CriaPagamentoUseCaseFactory(
-        this.pagamentoRepository
+        new MercadoPagoGateway(this.mercadoPagoService),
+        new PagamentoGateway(this.pagamentoRepository),
+        new PedidoPagamentoGateway(this.pedidoPagamentoRepository)
       );
 
-      const { pagamento } = await criaPagamento.executarAsync({
+      const { pagamento, pedidoPagamento } = await criaPagamento.executarAsync({
+        idPedido,
+        valor,
         requestPayload: JSON.stringify(requestMercadoPago),
         responsePayload: JSON.stringify(responseMercadoPago),
-      });
-
-      const criaPedidoPagamento = CriaPedidoPagamentoUseCaseFactory(
-        this.pedidoPagamentoRepository
-      );
-
-      if (!pagamento.id) {
-        throw new ApiError("Não foi possível realizar o pagamento", 500);
-      }
-
-      const pedidoPagamento = await criaPedidoPagamento.executarAsync({
-        idPagamento: pagamento.id,
-        idPedido,
-        status_pagamento: StatusPagamento.aguardando,
-        valor,
       });
 
       return response.status(201).json({
@@ -57,7 +48,6 @@ class PagamentoController {
           payload: {
             request: JSON.parse(pagamento.requestPayload),
             response: JSON.parse(pagamento.responsePayload),
-            webhook: JSON.parse(pagamento.webhookResponsePayload as string),
           },
         },
         pedidoPagamento,

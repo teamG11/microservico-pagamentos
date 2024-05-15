@@ -1,28 +1,54 @@
+import { ApiError } from "@/Application/errors/ApiError";
 import { Pagamento } from "@/Domain/Entities/Pagamento";
+import { PedidoPagamento } from "@/Domain/Entities/PedidoPagamento";
+import { StatusPagamento } from "@/Domain/Enums/StatusPagamento";
+import { IMercadoPagoGateway } from "@/Interfaces/Gateways/MercadoPagoGateway";
 import { IPagamentoGateway } from "@/Interfaces/Gateways/PagamentoGateway";
+import { IPedidoPagamentoGateway } from "@/Interfaces/Gateways/PedidoPagamentoGateway";
 interface CriaPagamentoRequest {
+  idPedido: number;
+  valor: number;
   requestPayload: string;
   responsePayload: string;
-  webhookResponsePayload?: string | null;
 }
 interface CriaPagamentoResponse {
   pagamento: Pagamento;
+  pedidoPagamento: PedidoPagamento;
 }
 export class CriaPagamentoUseCase {
-  constructor(private pagamentoGateway: IPagamentoGateway) {}
+  constructor(
+    private mercadoPagoGateway: IMercadoPagoGateway,
+    private pagamentoGateway: IPagamentoGateway,
+    private pedidoPagamentoGateway: IPedidoPagamentoGateway
+  ) {}
 
   async executarAsync({
-    requestPayload,
-    responsePayload,
-    webhookResponsePayload = null,
+    idPedido,
+    valor,
   }: CriaPagamentoRequest): Promise<CriaPagamentoResponse> {
-    const pagamento = new Pagamento(
-      requestPayload,
-      responsePayload,
-      webhookResponsePayload
+    const Pagamento = await this.mercadoPagoGateway.createAsync(
+      valor,
+      idPedido
     );
 
-    const pagamentoSalvo = await this.pagamentoGateway.createAsync(pagamento);
-    return { pagamento: pagamentoSalvo };
+    const pagamentoCriado = await this.pagamentoGateway.createAsync(Pagamento);
+
+    if (!pagamentoCriado.id) {
+      throw new ApiError("Não foi possível realizar o pagamento", 500);
+    }
+
+    const pedidoPagamentoCriado = await this.pedidoPagamentoGateway.createAsync(
+      new PedidoPagamento(
+        idPedido,
+        valor,
+        StatusPagamento.aguardando,
+        pagamentoCriado.id
+      )
+    );
+
+    return {
+      pagamento: pagamentoCriado,
+      pedidoPagamento: pedidoPagamentoCriado,
+    };
   }
 }

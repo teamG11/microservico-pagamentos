@@ -6,6 +6,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(7000),
   DATABASE_URL: z.string(),
   TOKEN_MERCADO_PAGO: z.string(),
+  TOKEN_MERCADO_PAGO_DEV: z.string(),
 });
 
 const _env = envSchema.safeParse(process.env);
