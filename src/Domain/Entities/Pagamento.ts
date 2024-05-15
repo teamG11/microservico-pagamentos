@@ -1,4 +1,4 @@
-export class Pedido {
+export class Pagamento {
   id?: number;
 
   id_cliente: number;
