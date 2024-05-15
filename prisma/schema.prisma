@@ -2,66 +2,35 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider      = "prisma-client-js"
-    binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+    provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
+    provider = "mongodb"
     url      = env("DATABASE_URL")
 }
 
-model Cliente {
-    id         Int      @id @default(autoincrement())
-    nome       String
-    sobrenome  String?
-    cpf        String   @unique
-    created_at DateTime @default(now())
-    updated_at DateTime @default(now()) @updatedAt
-    pedidos    Pedido[]
+model Pagamento {
+    id                     String           @id @default(auto()) @map("_id") @db.ObjectId
+    requestPayload         String           @map("request_payload")
+    responsePayload        String           @map("response_payload")
+    webhookResponsePayload String?          @map("webhook_response_payload")
+    createdAt              DateTime         @default(now()) @map("created_at")
+    updatedAt              DateTime         @default(now()) @updatedAt @map("updated_at")
+    PedidoPagamento        PedidoPagamento?
 
-    @@map("cliente")
+    @@map("pagamento")
 }
 
-model Produto {
-    id          Int           @id @default(autoincrement())
-    nome        String
-    descricao   String
-    categoria   String
-    valor       Int
-    disponivel  Boolean       @default(true)
-    created_at  DateTime      @default(now())
-    updated_at  DateTime      @default(now()) @updatedAt
-    pedidoItens PedidoItens[]
+model PedidoPagamento {
+    id              String    @id @default(auto()) @map("_id") @db.ObjectId
+    idPedido        Int       @unique @map("id_pedido")
+    valor           Int
+    statusPagamento String    @map("status_pagamento")
+    idPagamento     String    @unique @map("id_pagamento") @db.ObjectId
+    pagamento       Pagamento @relation(fields: [idPagamento], references: [id])
+    createdAt       DateTime  @default(now()) @map("created_at")
+    updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at")
 
-    @@map("produto")
-}
-
-model Pedido {
-    id               Int           @id @default(autoincrement())
-    id_cliente       Int
-    cliente          Cliente       @relation(fields: [id_cliente], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    valor_final      Int?
-    tipo_pagamento   String?
-    status           String?
-    status_pagamento String?
-    created_at       DateTime      @default(now())
-    updated_at       DateTime      @default(now()) @updatedAt
-    pedidoItens      PedidoItens[]
-
-    @@map("pedido")
-}
-
-model PedidoItens {
-    id_pedido      Int
-    id_produto     Int
-    pedido         Pedido   @relation(fields: [id_pedido], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    produto        Produto  @relation(fields: [id_produto], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    quantidade     Int
-    valor_unitario Int
-    created_at     DateTime @default(now())
-    updated_at     DateTime @default(now()) @updatedAt
-
-    @@unique([id_pedido, id_produto], map: "id_pedido_id_produto_unique")
-    @@map("pedido_itens")
+    @@map("pedido_pagamento")
 }

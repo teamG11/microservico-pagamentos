@@ -1,20 +1,28 @@
 import { Pagamento } from "@/Domain/Entities/Pagamento";
-import { StatusPagamento } from "@/Domain/Enums/StatusPagamento";
 import { IPagamentoGateway } from "@/Interfaces/Gateways/PagamentoGateway";
-
+interface CriaPagamentoRequest {
+  requestPayload: string;
+  responsePayload: string;
+  webhookResponsePayload?: string | null;
+}
+interface CriaPagamentoResponse {
+  pagamento: Pagamento;
+}
 export class CriaPagamentoUseCase {
   constructor(private pagamentoGateway: IPagamentoGateway) {}
 
-  async executarAsync(id_cliente: number): Promise<Pagamento> {
-    const pagamento = new Pagamento({
-      id_cliente,
-      valor_final: null,
-      tipo_pagamento: null,
-      status: null,
-      status_pagamento: StatusPagamento.aguardando,
-    });
+  async executarAsync({
+    requestPayload,
+    responsePayload,
+    webhookResponsePayload = null,
+  }: CriaPagamentoRequest): Promise<CriaPagamentoResponse> {
+    const pagamento = new Pagamento(
+      requestPayload,
+      responsePayload,
+      webhookResponsePayload
+    );
 
     const pagamentoSalvo = await this.pagamentoGateway.createAsync(pagamento);
-    return pagamentoSalvo;
+    return { pagamento: pagamentoSalvo };
   }
 }

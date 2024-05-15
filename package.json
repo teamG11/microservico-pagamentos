@@ -38,7 +38,7 @@
   },
   "homepage": "https://github.com/teamG11/lanchonete#readme",
   "dependencies": {
-    "@prisma/client": "5.4.2",
+    "@prisma/client": "5.14.0",
     "cors": "2.8.5",
     "dotenv": "16.3.1",
     "express": "4.19.2",
@@ -64,7 +64,7 @@
     "markdownlint-cli": "0.40.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.2.0",
-    "prisma": "5.4.2",
+    "prisma": "5.14.0",
     "tsup": "7.2.0",
     "tsx": "3.13.0",
     "typescript": "5.2.2",
