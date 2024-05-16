@@ -16,8 +16,8 @@ pagamentoRouter.post("", (req, res, next) => {
   void pagamentoController.criar(req, res, next);
 });
 
-pagamentoRouter.get("/status/{idPedido}", (req, res, next) => {
-  void pagamentoController.criar(req, res, next);
+pagamentoRouter.get("/status/:id_pedido}", (req, res, next) => {
+  void pagamentoController.buscarPorId(req, res, next);
 });
 
 export { pagamentoRouter };

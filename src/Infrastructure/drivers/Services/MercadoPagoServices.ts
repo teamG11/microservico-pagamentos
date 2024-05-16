@@ -1,3 +1,4 @@
+import { ApiError } from "@/Application/errors/ApiError";
 import { Pagamento } from "@/Domain/Entities/Pagamento";
 import { env } from "@/Infrastructure/env";
 import { mercadoPagoPagamentos } from "@/Infrastructure/lib/mercadoPago";
@@ -26,7 +27,13 @@ export default class MercadoPagoService implements IMercadoPagoService {
 
     const paymentResponse = await mercadoPagoPagamentos.create(request);
 
+    if (!paymentResponse.id || !paymentResponse.status) {
+      throw new ApiError("Dados inválidos", 500);
+    }
+
     const pagamento = new Pagamento(
+      paymentResponse.id,
+      paymentResponse.status,
       JSON.stringify(request),
       JSON.stringify(paymentResponse)
     );
@@ -34,8 +41,20 @@ export default class MercadoPagoService implements IMercadoPagoService {
     return pagamento;
   }
 
-  findByIdAsync(id: string): Promise<Pagamento | null> {
-    console.log(id);
-    throw new Error("Method not implemented.");
+  async findStatusByIdAsync(paymentId: number): Promise<string> {
+    const response = await mercadoPagoPagamentos.get({
+      id: paymentId,
+      requestOptions: {
+        idempotencyKey: uuidv4(),
+      },
+    });
+
+    const paymentStatus = response.status;
+
+    if (!paymentStatus) {
+      throw new ApiError("Não foi possível consultar o status", 500);
+    }
+
+    return paymentStatus;
   }
 }

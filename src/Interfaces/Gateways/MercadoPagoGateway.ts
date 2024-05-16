@@ -3,7 +3,7 @@ import { IMercadoPagoService } from "../Services/IMercadoPagoService";
 
 export interface IMercadoPagoGateway {
   createAsync(valor: number, idPedido: number): Promise<Pagamento>;
-  findByIdAsync(id: string): Promise<Pagamento | null>;
+  findByIdAsync(paymentId: number): Promise<Pagamento | null>;
 }
 
 export default class MercadoPagoGateway implements IMercadoPagoGateway {
@@ -13,7 +13,7 @@ export default class MercadoPagoGateway implements IMercadoPagoGateway {
     return this.mercadoPagoService.createAsync(valor, idPedido);
   }
 
-  findByIdAsync(id: string): Promise<Pagamento | null> {
-    return this.mercadoPagoService.findByIdAsync(id);
+  findByIdAsync(paymentId: number): Promise<Pagamento | null> {
+    return this.mercadoPagoService.findByIdAsync(paymentId);
   }
 }

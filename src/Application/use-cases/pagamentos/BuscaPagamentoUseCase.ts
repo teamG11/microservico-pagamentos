@@ -1,18 +1,19 @@
-import { ApiError } from "@/Application/errors/ApiError";
 import { Pagamento } from "@/Domain/Entities/Pagamento";
 import { PedidoPagamento } from "@/Domain/Entities/PedidoPagamento";
 import { StatusPagamento } from "@/Domain/Enums/StatusPagamento";
 import { IMercadoPagoGateway } from "@/Interfaces/Gateways/MercadoPagoGateway";
 import { IPagamentoGateway } from "@/Interfaces/Gateways/PagamentoGateway";
 import { IPedidoPagamentoGateway } from "@/Interfaces/Gateways/PedidoPagamentoGateway";
-interface CriaPagamentoRequest {
+
+interface BuscaPagamentoRequest {
   idPedido: number;
-  valor: number;
 }
-interface CriaPagamentoResponse {
+
+interface BuscaPagamentoResponse {
   pagamento: Pagamento;
   pedidoPagamento: PedidoPagamento;
 }
+
 export class CriaPagamentoUseCase {
   constructor(
     private mercadoPagoGateway: IMercadoPagoGateway,
@@ -22,18 +23,9 @@ export class CriaPagamentoUseCase {
 
   async executarAsync({
     idPedido,
-    valor,
-  }: CriaPagamentoRequest): Promise<CriaPagamentoResponse> {
-    const Pagamento = await this.mercadoPagoGateway.createAsync(
-      valor,
-      idPedido
-    );
-
+  }: BuscaPagamentoRequest): Promise<BuscaPagamentoResponse> {
+    const Pagamento = await this.mercadoPagoGateway.createAsync(idPedido);
     const pagamentoCriado = await this.pagamentoGateway.createAsync(Pagamento);
-
-    if (!pagamentoCriado.id) {
-      throw new ApiError("Não foi possível realizar o pagamento", 500);
-    }
 
     const pedidoPagamentoCriado = await this.pedidoPagamentoGateway.createAsync(
       new PedidoPagamento(

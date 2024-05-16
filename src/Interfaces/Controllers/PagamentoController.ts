@@ -26,9 +26,6 @@ class PagamentoController {
 
       const { id_pedido: idPedido, valor } = createBodySchema.parse(dados);
 
-      const requestMercadoPago = { id: 123 };
-      const responseMercadoPago = { id: 123 };
-
       const criaPagamento = CriaPagamentoUseCaseFactory(
         new MercadoPagoGateway(this.mercadoPagoService),
         new PagamentoGateway(this.pagamentoRepository),
@@ -38,8 +35,6 @@ class PagamentoController {
       const { pagamento, pedidoPagamento } = await criaPagamento.executarAsync({
         idPedido,
         valor,
-        requestPayload: JSON.stringify(requestMercadoPago),
-        responsePayload: JSON.stringify(responseMercadoPago),
       });
 
       return response.status(201).json({
@@ -52,6 +47,27 @@ class PagamentoController {
         },
         pedidoPagamento,
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async buscarPorId(request: Request, response: Response, next: NextFunction) {
+    try {
+      const paramsSchema = z.object({
+        id_pedido: z.string().transform((value) => Number(value)),
+      });
+      const { id_pedido: pedidoId } = paramsSchema.parse(request.params);
+
+      const buscarPedido = BuscarPedidoUseCaseFactory();
+
+      const pedido = await buscarPedido.executarAsync(pedidoId);
+
+      if (pedido) {
+        return response.status(200).json(pedido);
+      } else {
+        return response.status(404).send("Pedido não encontrado.");
+      }
     } catch (error) {
       next(error);
     }
