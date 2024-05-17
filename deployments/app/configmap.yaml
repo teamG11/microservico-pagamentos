@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-pagamentos-configmap
+  labels:
+    app: app-pagamentos
+  namespace: lanchonete
+data:
+  node_env: dev
+  port: '7000'

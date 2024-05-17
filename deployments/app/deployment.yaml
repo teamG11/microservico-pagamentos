@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-pagamentos
+  namespace: lanchonete
+spec:
+  selector:
+    matchLabels:
+      app: app-pagamentos
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: app-pagamentos
+    spec:
+      containers:
+        - name: app-pagamentos
+          image: leoeareis/lanchonete-pagamentos:latest
+          imagePullPolicy: "IfNotPresent"
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "1"
+            requests:
+              memory: 256Mi
+              cpu: "0.2"
+          ports:
+            - containerPort: 7000
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: connection-url
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: app-pagamentos-configmap
+                  key: node_env
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-pagamentos-configmap
+                  key: port
+
