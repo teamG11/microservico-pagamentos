@@ -1,18 +1,16 @@
+import { BuscaPagamentoUseCaseFactory } from "@/Application/use-cases-factories/pagamentos/BuscaPagamentoUseCaseFactory";
 import { CriaPagamentoUseCaseFactory } from "@/Application/use-cases-factories/pagamentos/CriaPagamentoUseCaseFactory";
 import { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import MercadoPagoGateway from "../Gateways/MercadoPagoGateway";
 import PagamentoGateway from "../Gateways/PagamentoGateway";
-import PedidoPagamentoGateway from "../Gateways/PedidoPagamentoGateway";
 import { IPagamentoRepository } from "../Repositories/IPagamentoRepository";
-import { IPedidoPagamentoRepository } from "../Repositories/IPedidoPagamentoRepository";
 import { IMercadoPagoService } from "../Services/IMercadoPagoService";
 
 class PagamentoController {
   constructor(
     private mercadoPagoService: IMercadoPagoService,
-    private pagamentoRepository: IPagamentoRepository,
-    private pedidoPagamentoRepository: IPedidoPagamentoRepository
+    private pagamentoRepository: IPagamentoRepository
   ) {}
 
   async criar(request: Request, response: Response, next: NextFunction) {
@@ -28,24 +26,18 @@ class PagamentoController {
 
       const criaPagamento = CriaPagamentoUseCaseFactory(
         new MercadoPagoGateway(this.mercadoPagoService),
-        new PagamentoGateway(this.pagamentoRepository),
-        new PedidoPagamentoGateway(this.pedidoPagamentoRepository)
+        new PagamentoGateway(this.pagamentoRepository)
       );
 
-      const { pagamento, pedidoPagamento } = await criaPagamento.executarAsync({
+      const { pagamento } = await criaPagamento.executarAsync({
         idPedido,
         valor,
       });
 
       return response.status(201).json({
-        pagamento: {
-          id: pagamento.id,
-          payload: {
-            request: JSON.parse(pagamento.requestPayload),
-            response: JSON.parse(pagamento.responsePayload),
-          },
-        },
-        pedidoPagamento,
+        id: pagamento.id,
+        pagamento: pagamento,
+        payload: JSON.parse(pagamento.responsePayload),
       });
     } catch (error) {
       next(error);
@@ -57,11 +49,14 @@ class PagamentoController {
       const paramsSchema = z.object({
         id_pedido: z.string().transform((value) => Number(value)),
       });
-      const { id_pedido: pedidoId } = paramsSchema.parse(request.params);
+      const { id_pedido: idPedido } = paramsSchema.parse(request.params);
 
-      const buscarPedido = BuscarPedidoUseCaseFactory();
+      const buscarPedido = BuscaPagamentoUseCaseFactory(
+        new MercadoPagoGateway(this.mercadoPagoService),
+        new PagamentoGateway(this.pagamentoRepository)
+      );
 
-      const pedido = await buscarPedido.executarAsync(pedidoId);
+      const pedido = await buscarPedido.executarAsync({ idPedido });
 
       if (pedido) {
         return response.status(200).json(pedido);

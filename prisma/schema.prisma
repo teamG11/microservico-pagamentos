@@ -11,28 +11,15 @@ datasource db {
 }
 
 model Pagamento {
-    id                     String           @id @default(auto()) @map("_id") @db.ObjectId
-    paymentId              Int?             @unique
-    paymentStatus          String?
-    requestPayload         String
+    id                     String   @id @default(auto()) @map("_id") @db.ObjectId
+    idPedido               Int      @unique
+    valor                  Int
+    paymentId              Int      @unique
+    paymentStatus          String
     responsePayload        String
     webhookResponsePayload String?
-    createdAt              DateTime         @default(now())
-    updatedAt              DateTime         @default(now()) @updatedAt
-    PedidoPagamento        PedidoPagamento?
+    createdAt              DateTime @default(now())
+    updatedAt              DateTime @default(now()) @updatedAt
 
     @@map("pagamento")
-}
-
-model PedidoPagamento {
-    id              String    @id @default(auto()) @map("_id") @db.ObjectId
-    idPedido        Int       @unique
-    valor           Int
-    statusPagamento String
-    idPagamento     String    @unique @db.ObjectId
-    pagamento       Pagamento @relation(fields: [idPagamento], references: [id])
-    createdAt       DateTime  @default(now())
-    updatedAt       DateTime  @default(now()) @updatedAt
-
-    @@map("pedido_pagamento")
 }

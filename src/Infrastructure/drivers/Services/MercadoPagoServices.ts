@@ -1,13 +1,13 @@
 import { ApiError } from "@/Application/errors/ApiError";
-import { Pagamento } from "@/Domain/Entities/Pagamento";
 import { env } from "@/Infrastructure/env";
 import { mercadoPagoPagamentos } from "@/Infrastructure/lib/mercadoPago";
 import { IMercadoPagoService } from "@/Interfaces/Services/IMercadoPagoService";
+import { PaymentResponse } from "mercadopago/dist/clients/payment/commonTypes";
 import { PaymentCreateData } from "mercadopago/dist/clients/payment/create/types";
 import { v4 as uuidv4 } from "uuid";
 
 export default class MercadoPagoService implements IMercadoPagoService {
-  async createAsync(valor: number, idPedido: number): Promise<Pagamento> {
+  async createAsync(valor: number, idPedido: number): Promise<PaymentResponse> {
     const request: PaymentCreateData = {
       body: {
         transaction_amount: valor,
@@ -31,17 +31,10 @@ export default class MercadoPagoService implements IMercadoPagoService {
       throw new ApiError("Dados inválidos", 500);
     }
 
-    const pagamento = new Pagamento(
-      paymentResponse.id,
-      paymentResponse.status,
-      JSON.stringify(request),
-      JSON.stringify(paymentResponse)
-    );
-
-    return pagamento;
+    return paymentResponse;
   }
 
-  async findStatusByIdAsync(paymentId: number): Promise<string> {
+  async findByIdAsync(paymentId: number): Promise<PaymentResponse> {
     const response = await mercadoPagoPagamentos.get({
       id: paymentId,
       requestOptions: {
@@ -49,12 +42,10 @@ export default class MercadoPagoService implements IMercadoPagoService {
       },
     });
 
-    const paymentStatus = response.status;
-
-    if (!paymentStatus) {
-      throw new ApiError("Não foi possível consultar o status", 500);
+    if (!response) {
+      throw new ApiError("Não foi possível consultar o pagamento", 500);
     }
 
-    return paymentStatus;
+    return response;
   }
 }

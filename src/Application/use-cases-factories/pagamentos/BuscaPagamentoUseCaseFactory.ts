@@ -1,15 +1,15 @@
+import { BuscaPagamentoUseCase } from "@/Application/use-cases/pagamentos/BuscaPagamentoUseCase";
 import { IMercadoPagoGateway } from "@/Interfaces/Gateways/MercadoPagoGateway";
 import { IPagamentoGateway } from "@/Interfaces/Gateways/PagamentoGateway";
-import { CriaPagamentoUseCase } from "../../use-cases/pagamentos/CriaPagamentoUseCase";
 
-export function CriaPagamentoUseCaseFactory(
+export function BuscaPagamentoUseCaseFactory(
   mercadoPagoGateway: IMercadoPagoGateway,
   pagamentoGateway: IPagamentoGateway
 ) {
-  const criaPagamentoUseCase = new CriaPagamentoUseCase(
+  const buscaPagamentoUseCase = new BuscaPagamentoUseCase(
     mercadoPagoGateway,
     pagamentoGateway
   );
 
-  return criaPagamentoUseCase;
+  return buscaPagamentoUseCase;
 }

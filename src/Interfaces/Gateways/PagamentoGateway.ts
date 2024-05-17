@@ -3,6 +3,8 @@ import { IPagamentoRepository } from "../Repositories/IPagamentoRepository";
 
 export interface IPagamentoGateway {
   createAsync(pagamento: Pagamento): Promise<Pagamento>;
+  findByIdAsync(idPedido: number): Promise<Pagamento>;
+  updateStatusAsync(idPedido: number, status: string): Promise<Pagamento>;
 }
 
 export default class PagamentoGateway implements IPagamentoGateway {
@@ -10,5 +12,13 @@ export default class PagamentoGateway implements IPagamentoGateway {
 
   createAsync(pagamento: Pagamento): Promise<Pagamento> {
     return this.pagamentoRepository.createAsync(pagamento);
+  }
+
+  findByIdAsync(idPedido: number): Promise<Pagamento> {
+    return this.pagamentoRepository.findByIdAsync(idPedido);
+  }
+
+  updateStatusAsync(idPedido: number, status: string): Promise<Pagamento> {
+    return this.pagamentoRepository.updateStatusAsync(idPedido, status);
   }
 }
