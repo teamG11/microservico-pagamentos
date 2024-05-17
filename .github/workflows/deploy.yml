@@ -56,3 +56,21 @@ jobs:
           target: production
           push: true
           tags: leoeareis/lanchonete-pagamentos:latest
+
+  deploy_to_kubernetes:
+    name: deploy app to kubernetes
+    runs-on: ubuntu-latest
+    needs: generate_latest_image
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Update kubectl config
+        run: echo "aws eks update-kubeconfig --region us-east-1 --name lanchonete"
+      - name: Apply deployment
+        run: echo "kubectl apply -f deployments/app"
