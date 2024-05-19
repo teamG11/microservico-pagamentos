@@ -1,6 +1,6 @@
 import { Pagamento } from "@/Domain/Entities/Pagamento";
 import { StatusPagamento } from "@/Domain/Enums/StatusPagamento";
-import { IMercadoPagoGateway } from "@/Interfaces/Gateways/MercadoPagoGateway";
+import { IMercadoPagoGateway } from "@/Interfaces/Gateways/External/MercadoPagoGateway";
 import { IPagamentoGateway } from "@/Interfaces/Gateways/PagamentoGateway";
 
 interface IRequest {

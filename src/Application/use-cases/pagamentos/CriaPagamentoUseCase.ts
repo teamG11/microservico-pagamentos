@@ -1,6 +1,6 @@
 import { ApiError } from "@/Application/errors/ApiError";
 import { Pagamento } from "@/Domain/Entities/Pagamento";
-import { IMercadoPagoGateway } from "@/Interfaces/Gateways/MercadoPagoGateway";
+import { IMercadoPagoGateway } from "@/Interfaces/Gateways/External/MercadoPagoGateway";
 import { IPagamentoGateway } from "@/Interfaces/Gateways/PagamentoGateway";
 interface IRequest {
   idPedido: number;

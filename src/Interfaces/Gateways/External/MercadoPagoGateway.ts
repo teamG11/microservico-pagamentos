@@ -1,7 +1,7 @@
 import { Pagamento } from "@/Domain/Entities/Pagamento";
 import { StatusPagamento } from "@/Domain/Enums/StatusPagamento";
 import { PaymentResponse } from "mercadopago/dist/clients/payment/commonTypes";
-import { IMercadoPagoService } from "../Services/IMercadoPagoService";
+import { IMercadoPagoService } from "../../Services/IMercadoPagoService";
 
 export interface IMercadoPagoGateway {
   createAsync(valor: number, idPedido: number): Promise<Pagamento>;
