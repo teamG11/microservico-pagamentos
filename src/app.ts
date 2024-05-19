@@ -1,20 +1,19 @@
-import express from "express";
 import cors from "cors";
-
-import { clienteRouter } from "./Infrastructure/api/routes/ClienteRouter";
-import { produtoRouter } from "./Infrastructure/api/routes/ProdutoRouter";
-import { pedidoRouter } from "./Infrastructure/api/routes/PedidoRouter";
+import express from "express";
 
 import { errorMiddleware } from "./Infrastructure/api/middlewares/error";
+import { healthCheckRouter } from "./Infrastructure/api/routes/HealthCheckRouter";
+import { pagamentoRouter } from "./Infrastructure/api/routes/PagamentoRouter";
+import { webhookRouter } from "./Infrastructure/api/routes/WebhookRouter";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.use("/cliente", clienteRouter);
-app.use("/produto", produtoRouter);
-app.use("/pedido", pedidoRouter);
+app.use("/health_check", healthCheckRouter);
+app.use("/pagamento", pagamentoRouter);
+app.use("/webhook", webhookRouter);
 
 app.use(errorMiddleware);
 

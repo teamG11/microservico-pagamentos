@@ -1,6 +1,6 @@
 # development
 
-FROM node:18-alpine AS development
+FROM node:18-alpine3.16 AS development
 
 WORKDIR /usr/src/app
 
@@ -15,7 +15,7 @@ EXPOSE 3000
 
 # build
 
-FROM node:18-alpine AS build
+FROM node:18-alpine3.16 AS build
 
 WORKDIR /usr/src/app
 
@@ -31,7 +31,7 @@ RUN npm run build
 
 ENV NODE_ENV production
 
-RUN npm run prisma:generate
+# RUN npm run prisma:generate
 
 USER node
 
