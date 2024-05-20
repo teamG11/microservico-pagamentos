@@ -1,6 +1,6 @@
 # development
 
-FROM node:18-alpine3.16 AS development
+FROM node:18-alpine3.16 AS development-pagamentos
 
 WORKDIR /usr/src/app
 
@@ -23,13 +23,13 @@ COPY --chown=node:node package*.json ./
 
 COPY --chown=node:node prisma ./prisma/
 
-COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node --from=development-pagamentos /usr/src/app/node_modules ./node_modules
 
 COPY --chown=node:node . .
 
 RUN npm run build
 
-ENV NODE_ENV production
+ENV NODE_ENV production-pagamentos
 
 # RUN npm run prisma:generate
 
@@ -37,7 +37,7 @@ USER node
 
 # production
 
-FROM node:18-alpine AS production
+FROM node:18-alpine3.16 AS production-pagamentos
 
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/build ./build

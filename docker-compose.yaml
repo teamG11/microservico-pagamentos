@@ -4,15 +4,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: development
+      target: development-pagamentos
     volumes:
       - ./:/usr/src/app
     environment:
-      PORT: 7000
+      PORT: 7003
       NODE_ENV: dev
-      DATABASE_URL: mongodb+srv://pagamento:<lanchonete>@pagamentos.djvoood.mongodb.net/?retryWrites=true&w=majority&appName=pagamentos
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/lanchonete?schema=public
+      TOKEN_MERCADO_PAGO_DEV: TEST-3012597545599426-051414-ffccb6c232ef1ade75243761b1e67a39-73897475
+      MICROSERVICO_OPERACAO_URL: http://localhost:7000
     ports:
-      - 7000:7000
+      - 7003:7003
     # command: sh -c "npx prisma migrate deploy && npm run dev"
     command: sh -c "npm run dev"
 

@@ -242,7 +242,7 @@ paths:
           description: ID do pedido
           in: path
           required: true
-          type: string  
+          type: string
       responses:
         '200':
           description: OK
@@ -353,7 +353,7 @@ paths:
           description: Erro de validação
         '500':
           description: Erro interno
-parameters: 
+parameters:
   nomeCliente:
     name: nome
     description: Nome do cliente
@@ -450,12 +450,12 @@ parameters:
     in: body
     required: false
     type: enum
-  
+
 definitions:
   Cliente:
     type: object
     properties:
-      id: 
+      id:
         type: string
       nome:
         type: string
@@ -491,7 +491,7 @@ definitions:
         type: enum
       status:
         type: enum
-tags: 
+tags:
   - Cliente
   - Pedido
   - Produto

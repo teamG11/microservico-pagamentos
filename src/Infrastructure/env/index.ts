@@ -5,7 +5,6 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["dev", "test", "production"]).default("dev"),
   PORT: z.coerce.number().default(7001),
   DATABASE_URL: z.string(),
-  TOKEN_MERCADO_PAGO: z.string(),
   TOKEN_MERCADO_PAGO_DEV: z.string(),
   MICROSERVICO_OPERACAO_URL: z.string().url(),
 });
