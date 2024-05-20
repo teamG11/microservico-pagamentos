@@ -72,7 +72,7 @@ describe("PagamentoController", () => {
 
   describe("editar", () => {
     it("Deve editar um pagamento com sucesso", async () => {
-      const teste: PaymentResponse = {
+      const payment: PaymentResponse = {
         api_response: { status: 200, headers: ["", [""]] },
         id: 222,
         transaction_amount: 5.5,
@@ -96,7 +96,7 @@ describe("PagamentoController", () => {
         JSON.stringify(PaymentResponse)
       );
 
-      mercadoPagoServices.payments.push(teste);
+      mercadoPagoServices.payments.push(payment);
       pagamentoRepository.pagamentos.push(pagamento);
 
       const mockRequest: Partial<Request> = {
