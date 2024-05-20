@@ -24,6 +24,14 @@ export default class MercadoPagoServiceTest implements IMercadoPagoService {
       },
     };
 
+    if (idPedido == 666) {
+      paymentResponse.status = undefined;
+    }
+
+    if (idPedido == 777) {
+      paymentResponse.external_reference = undefined;
+    }
+
     this.payments.push(paymentResponse);
 
     return paymentResponse;

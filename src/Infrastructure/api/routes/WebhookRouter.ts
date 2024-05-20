@@ -11,7 +11,6 @@ const pagamentoController = new PagamentoController(
 );
 
 webhookRouter.post("", (req, res, next) => {
-  console.log(req);
   void pagamentoController.atualizar(req, res, next);
 });
 

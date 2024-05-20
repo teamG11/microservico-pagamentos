@@ -17,11 +17,13 @@ export default class MercadoPagoGateway implements IMercadoPagoGateway {
       idPedido
     );
 
+    const paymentStatus = paymentResponse.status ?? StatusPagamento.aguardando;
+
     return new Pagamento(
       idPedido,
       valor,
-      paymentResponse.id ?? 0,
-      paymentResponse.status ?? StatusPagamento.aguardando,
+      Number(paymentResponse.id),
+      paymentStatus,
       JSON.stringify(paymentResponse)
     );
   }

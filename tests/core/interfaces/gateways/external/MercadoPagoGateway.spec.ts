@@ -46,6 +46,37 @@ describe("ClienteGateway", () => {
       );
     });
 
+    it("Deve salvar um pagamento com sucesso sem retorno de status", async () => {
+      const pagamento = new Pagamento(
+        666,
+        5.5,
+        222,
+        StatusPagamento.aguardando,
+        JSON.stringify({
+          api_response: { status: 200, headers: ["", [""]] },
+          id: 222,
+          transaction_amount: 5.5,
+          description: "Pedido de lanche nro 666",
+          payment_method_id: "pix",
+          external_reference: "666",
+          payer: {
+            email: "financeiro@lanchonete.com",
+            identification: { type: "CPF", number: "28254905045" },
+          },
+        })
+      );
+
+      const result = await mercadoPagoGateway.createAsync(
+        pagamento.valor,
+        pagamento.idPedido
+      );
+
+      expect(result).toEqual(pagamento);
+      expect(mercadoPagoService.payments).toContainEqual(
+        JSON.parse(pagamento.responsePayload)
+      );
+    });
+
     describe("findByIdPedidoAsync", () => {
       it("Deve encontrar um pagamento por Id Pedido com sucesso", async () => {
         const pagamento = new Pagamento(
@@ -56,10 +87,10 @@ describe("ClienteGateway", () => {
           JSON.stringify({
             api_response: { status: 200, headers: ["", [""]] },
             id: 222,
+            status: StatusPagamento.recebido,
             transaction_amount: 5.5,
             description: "Pedido de lanche nro 111",
             payment_method_id: "pix",
-            status: StatusPagamento.recebido,
             external_reference: "111",
             payer: {
               email: "financeiro@lanchonete.com",

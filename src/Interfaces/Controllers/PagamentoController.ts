@@ -59,12 +59,7 @@ class PagamentoController {
       );
 
       const pedido = await buscarPedido.executarAsync({ idPedido });
-
-      if (pedido) {
-        return response.status(200).json(pedido);
-      } else {
-        return response.status(404).send("Pedido não encontrado.");
-      }
+      return response.status(200).json(pedido);
     } catch (error) {
       next(error);
     }
@@ -85,8 +80,8 @@ class PagamentoController {
         .parse(request.body);
 
       // Só trataremos os retornos de pagamento
-      if (action != "payment.update" && type != "payment") {
-        return response.status(200);
+      if (action != "payment.update" || type != "payment") {
+        return response.status(204);
       }
 
       const atualizaSituacaoPagamento = AtualizaSituacaoPagamentoUseCaseFactory(
