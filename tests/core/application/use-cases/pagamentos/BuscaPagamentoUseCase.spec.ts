@@ -49,7 +49,7 @@ describe("BuscaPagamentoUseCase", () => {
   });
 
   it("Deve dar erro caso não haja pagamento para o idPedido", async () => {
-    await expect(useCase.executarAsync({ idPedido: 222 })).rejects.toThrowError(
+    await expect(useCase.executarAsync({ idPedido: 999 })).rejects.toThrowError(
       "Registro não encontrado."
     );
   });

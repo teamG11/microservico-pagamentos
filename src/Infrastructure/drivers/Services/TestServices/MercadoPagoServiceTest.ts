@@ -1,4 +1,5 @@
 import { ApiError } from "@/Application/errors/ApiError";
+import { StatusPagamento } from "@/Domain/Enums/StatusPagamento";
 import { env } from "@/Infrastructure/env";
 import { IMercadoPagoService } from "@/Interfaces/Services/IMercadoPagoService";
 import { PaymentResponse } from "mercadopago/dist/clients/payment/commonTypes";
@@ -10,6 +11,7 @@ export default class MercadoPagoServiceTest implements IMercadoPagoService {
     const paymentResponse: PaymentResponse = {
       api_response: { status: 200, headers: ["", [""]] },
       id: 222,
+      status: StatusPagamento.aguardando,
       transaction_amount: valor,
       description: "Pedido de lanche nro " + idPedido,
       payment_method_id: env.NODE_ENV == "dev" ? "pix" : "Pix",
@@ -37,6 +39,7 @@ export default class MercadoPagoServiceTest implements IMercadoPagoService {
       throw new ApiError("Não foi possível consultar o pagamento", 500);
     }
 
+    paymentResponse.status = StatusPagamento.recebido;
     return paymentResponse;
   }
 }

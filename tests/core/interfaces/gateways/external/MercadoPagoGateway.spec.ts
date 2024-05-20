@@ -23,6 +23,7 @@ describe("ClienteGateway", () => {
         JSON.stringify({
           api_response: { status: 200, headers: ["", [""]] },
           id: 222,
+          status: StatusPagamento.aguardando,
           transaction_amount: 5.5,
           description: "Pedido de lanche nro 111",
           payment_method_id: "Pix",
@@ -58,6 +59,7 @@ describe("ClienteGateway", () => {
             transaction_amount: 5.5,
             description: "Pedido de lanche nro 111",
             payment_method_id: "Pix",
+            status: StatusPagamento.recebido,
             external_reference: "111",
             payer: {
               email: "financeiro@lanchonete.com",
