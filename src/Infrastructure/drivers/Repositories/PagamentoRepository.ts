@@ -1,4 +1,3 @@
-import { DadosInvalidosError } from "@/Application/errors/DadosInvalidosError";
 import { RegistroNaoEncontradoError } from "@/Application/errors/RegistroNaoEncontradoError";
 import { Pagamento } from "@/Domain/Entities/Pagamento";
 import { prisma } from "@/Infrastructure/lib/prisma";
@@ -6,10 +5,6 @@ import { IPagamentoRepository } from "@/Interfaces/Repositories/IPagamentoReposi
 
 export default class PagamentoRepository implements IPagamentoRepository {
   async createAsync(pagamento: Pagamento): Promise<Pagamento> {
-    if (!pagamento.paymentId || !pagamento.paymentStatus) {
-      throw new DadosInvalidosError();
-    }
-
     const createdPagamento = await prisma.pagamento.create({
       data: pagamento,
     });

@@ -17,6 +17,7 @@ export class AtualizaSituacaoPagamentoUseCase {
       paymentId
     );
 
+    console.log("paymentResponse", paymentResponse);
     if (!paymentResponse || !paymentResponse.external_reference) {
       throw new RegistroNaoEncontradoError();
     }

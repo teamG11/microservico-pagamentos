@@ -119,6 +119,55 @@ describe("PagamentoController", () => {
       expect(mockResponse.status).toHaveBeenCalledWith(200);
     });
 
+    it("Não deve ser processado por ser outro status", async () => {
+      const payment: PaymentResponse = {
+        api_response: { status: 200, headers: ["", [""]] },
+        id: 222,
+        transaction_amount: 5.5,
+        description: "Pedido de lanche nro 111",
+        payment_method_id: "pix",
+        external_reference: "111",
+        payer: {
+          email: "financeiro@lanchonete.com",
+          identification: {
+            type: "CPF",
+            number: "28254905045",
+          },
+        },
+      };
+
+      const pagamento = new Pagamento(
+        111,
+        5.5,
+        222,
+        StatusPagamento.aguardando,
+        JSON.stringify(PaymentResponse)
+      );
+
+      mercadoPagoServices.payments.push(payment);
+      pagamentoRepository.pagamentos.push(pagamento);
+
+      const mockRequest: Partial<Request> = {
+        body: {
+          action: "payment.created",
+          api_version: "1",
+          date_created: "2025",
+          id: "222",
+          live_mode: true,
+          type: "payment",
+          user_id: 123,
+        },
+      };
+
+      await pagamentoController.atualizar(
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext
+      );
+
+      expect(mockResponse.status).toHaveBeenCalledWith(204);
+    });
+
     it("Não deve editar um pagamento com dados inválidos", async () => {
       const mockRequest: Partial<Request> = {
         params: {},

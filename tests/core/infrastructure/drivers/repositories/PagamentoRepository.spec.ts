@@ -64,6 +64,27 @@ describe("PagamentoRepository", () => {
     expect(result).toEqual(pagamento);
   });
 
+  it("Deve cadastrar pagamento corretamente", async () => {
+    const pagamento = {
+      id: "123465-abv",
+      idPedido: 1234,
+      valor: 5.5,
+      paymentId: 123456,
+      paymentStatus: StatusPagamento.aguardando,
+      responsePayload: JSON.stringify({ id: "123456" }),
+      webhookResponsePayload: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    vi.mocked(prisma.pagamento.create).mockResolvedValue(pagamento);
+
+    const result = await repository.createAsync(pagamento);
+    expect(prisma.pagamento.create).toHaveBeenCalledWith({ data: pagamento });
+
+    expect(result).toEqual(pagamento);
+  });
+
   it("deve atualizar um pagamento corretamente", async () => {
     const pagamento = {
       id: "123465-abv",

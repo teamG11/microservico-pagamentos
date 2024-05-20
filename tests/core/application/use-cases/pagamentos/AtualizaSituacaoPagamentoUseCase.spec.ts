@@ -45,6 +45,7 @@ describe("BuscaPagamentoUseCase", () => {
       mercadoPagoGateway,
       pagamentoGateway
     );
+
     const { pagamento: response } = await buscaPagamentoUseCase.executarAsync({
       idPedido: pagamento.idPedido,
     });
@@ -60,6 +61,25 @@ describe("BuscaPagamentoUseCase", () => {
     expect(response.webhookResponsePayload).toBe(
       pagamento.webhookResponsePayload
     );
+  });
+
+  it("Deve retornar que não encontrou o payment ", async () => {
+    const pagamento = new Pagamento(
+      777,
+      5.5,
+      222,
+      StatusPagamento.aguardando,
+      JSON.stringify("")
+    );
+
+    pagamento.id = "333";
+
+    await pagamentoGateway.createAsync(pagamento);
+    await mercadoPagoGateway.createAsync(pagamento.valor, pagamento.idPedido);
+
+    await expect(
+      useCase.executarAsync({ paymentId: pagamento.paymentId })
+    ).rejects.toThrowError("Registro não encontrado");
   });
 
   it("Deve retornar erro ao editar pagamento inexistente", async () => {

@@ -96,6 +96,12 @@ describe("ClienteGateway", () => {
 
       updateAsyncSpy.mockRestore();
     });
+
+    it("Deve falhar ao nao encontrar pagamento no repositório", async () => {
+      await expect(
+        pagamentoGateway.updateStatusAsync(123, StatusPagamento.aguardando)
+      ).rejects.toThrowError();
+    });
   });
 
   describe("findByIdPedidoAsync", () => {

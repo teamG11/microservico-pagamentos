@@ -1,4 +1,3 @@
-import { ApiError } from "@/Application/errors/ApiError";
 import { Pagamento } from "@/Domain/Entities/Pagamento";
 import { IMercadoPagoGateway } from "@/Interfaces/Gateways/External/MercadoPagoGateway";
 import { IPagamentoGateway } from "@/Interfaces/Gateways/PagamentoGateway";
@@ -22,11 +21,6 @@ export class CriaPagamentoUseCase {
     );
 
     const pagamentoCriado = await this.pagamentoGateway.createAsync(pagamento);
-
-    if (!pagamentoCriado.id) {
-      throw new ApiError("Não foi possível realizar o pagamento", 500);
-    }
-
     return { pagamento: pagamentoCriado };
   }
 }
