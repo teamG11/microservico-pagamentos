@@ -3,13 +3,13 @@ import { env } from "@/Infrastructure/env";
 import { IMercadoPagoService } from "@/Interfaces/Services/IMercadoPagoService";
 import { PaymentResponse } from "mercadopago/dist/clients/payment/commonTypes";
 
-export default class MercadoPagoServicesTest implements IMercadoPagoService {
+export default class MercadoPagoServiceTest implements IMercadoPagoService {
   public payments: PaymentResponse[] = [];
 
   async createAsync(valor: number, idPedido: number): Promise<PaymentResponse> {
     const paymentResponse: PaymentResponse = {
       api_response: { status: 200, headers: ["", [""]] },
-      id: 123,
+      id: 222,
       transaction_amount: valor,
       description: "Pedido de lanche nro " + idPedido,
       payment_method_id: env.NODE_ENV == "dev" ? "pix" : "Pix",

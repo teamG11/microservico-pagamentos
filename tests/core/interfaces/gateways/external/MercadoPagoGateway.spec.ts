@@ -1,70 +1,88 @@
+import { Pagamento } from "@/Domain/Entities/Pagamento";
 import { StatusPagamento } from "@/Domain/Enums/StatusPagamento";
-import MercadoPagoService from "@/Infrastructure/drivers/Services/MercadoPagoService";
-import { env } from "@/Infrastructure/env";
-import { mercadoPagoPagamentos } from "@/Infrastructure/lib/mercadoPago";
-import { PaymentResponse } from "mercadopago/dist/clients/payment/commonTypes";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import MercadoPagoServiceTest from "@/Infrastructure/drivers/Services/TestServices/MercadoPagoServiceTest";
+import MercadoPagoGateway from "@/Interfaces/Gateways/External/MercadoPagoGateway";
+import { beforeEach, describe, expect, it } from "vitest";
 
-vi.mock("@/Infrastructure/lib/mercadoPago", () => ({
-  mercadoPagoPagamentos: {
-    create: vi.fn(),
-    get: vi.fn(),
-  },
-}));
-
-describe("MercadoPagoGateway", () => {
-  let mercadoPagoService: MercadoPagoService;
+describe("ClienteGateway", () => {
+  let mercadoPagoService: MercadoPagoServiceTest;
+  let mercadoPagoGateway: MercadoPagoGateway;
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    mercadoPagoService = new MercadoPagoService();
+    mercadoPagoService = new MercadoPagoServiceTest();
+    mercadoPagoGateway = new MercadoPagoGateway(mercadoPagoService);
   });
 
-  it("Deve cadastrar um payment corretamente", async () => {
-    const payment: PaymentResponse = {
-      api_response: { status: 200, headers: ["", [""]] },
-      id: 222,
-      transaction_amount: 5.5,
-      description: "Pedido de lanche nro 111",
-      payment_method_id: env.NODE_ENV == "dev" ? "pix" : "Pix",
-      external_reference: "111",
-      status: StatusPagamento.aguardando,
-      payer: {
-        email: "financeiro@lanchonete.com",
-        identification: {
-          type: "CPF",
-          number: "28254905045",
-        },
-      },
-    };
+  describe("saveAsync", () => {
+    it("Deve salvar um pagamento com sucesso", async () => {
+      const pagamento = new Pagamento(
+        111,
+        5.5,
+        222,
+        StatusPagamento.aguardando,
+        JSON.stringify({
+          api_response: { status: 200, headers: ["", [""]] },
+          id: 222,
+          transaction_amount: 5.5,
+          description: "Pedido de lanche nro 111",
+          payment_method_id: "Pix",
+          external_reference: "111",
+          payer: {
+            email: "financeiro@lanchonete.com",
+            identification: { type: "CPF", number: "28254905045" },
+          },
+        })
+      );
 
-    vi.mocked(mercadoPagoPagamentos.create).mockResolvedValue(payment);
-    const result = await mercadoPagoService.createAsync(5.5, 111);
-    expect(mercadoPagoPagamentos.create).toHaveBeenCalled();
-    expect(result).toEqual(payment);
-  });
+      const result = await mercadoPagoGateway.createAsync(
+        pagamento.valor,
+        pagamento.idPedido
+      );
 
-  it("deve encontrar um payment por id corretamente", async () => {
-    const payment: PaymentResponse = {
-      api_response: { status: 200, headers: ["", [""]] },
-      id: 222,
-      transaction_amount: 5.5,
-      description: "Pedido de lanche nro 111",
-      payment_method_id: env.NODE_ENV == "dev" ? "pix" : "Pix",
-      external_reference: "111",
-      status: StatusPagamento.aguardando,
-      payer: {
-        email: "financeiro@lanchonete.com",
-        identification: {
-          type: "CPF",
-          number: "28254905045",
-        },
-      },
-    };
-    vi.mocked(mercadoPagoPagamentos.get).mockResolvedValue(payment);
+      expect(result).toEqual(pagamento);
+      expect(mercadoPagoService.payments).toContainEqual(
+        JSON.parse(pagamento.responsePayload)
+      );
+    });
 
-    const result = await mercadoPagoService.findByIdAsync(Number(payment.id));
-    expect(mercadoPagoPagamentos.get).toHaveBeenCalled();
-    expect(result).toEqual(payment);
+    describe("findByIdPedidoAsync", () => {
+      it("Deve encontrar um pagamento por Id Pedido com sucesso", async () => {
+        const pagamento = new Pagamento(
+          111,
+          5.5,
+          222,
+          StatusPagamento.aguardando,
+          JSON.stringify({
+            api_response: { status: 200, headers: ["", [""]] },
+            id: 222,
+            transaction_amount: 5.5,
+            description: "Pedido de lanche nro 111",
+            payment_method_id: "Pix",
+            external_reference: "111",
+            payer: {
+              email: "financeiro@lanchonete.com",
+              identification: { type: "CPF", number: "28254905045" },
+            },
+          })
+        );
+
+        const savedpagamento = await mercadoPagoGateway.createAsync(
+          pagamento.valor,
+          pagamento.idPedido
+        );
+
+        const result = await mercadoPagoGateway.findByIdAsync(
+          savedpagamento.paymentId
+        );
+
+        expect(result).toEqual(JSON.parse(pagamento.responsePayload));
+      });
+
+      it("Deve retornar null se o pagamento não for encontrado", async () => {
+        await expect(mercadoPagoGateway.findByIdAsync(999)).rejects.toThrow(
+          "Não foi possível consultar o pagamento"
+        );
+      });
+    });
   });
 });
