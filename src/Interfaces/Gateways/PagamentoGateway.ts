@@ -1,9 +1,10 @@
+import { RegistroNaoEncontradoError } from "@/Application/errors/RegistroNaoEncontradoError";
 import { Pagamento } from "@/Domain/Entities/Pagamento";
 import { IPagamentoRepository } from "../Repositories/IPagamentoRepository";
 
 export interface IPagamentoGateway {
   createAsync(pagamento: Pagamento): Promise<Pagamento>;
-  findByIdAsync(idPedido: number): Promise<Pagamento>;
+  findByIdPedidoAsync(idPedido: number): Promise<Pagamento>;
   updateStatusAsync(idPedido: number, status: string): Promise<Pagamento>;
 }
 
@@ -14,11 +15,31 @@ export default class PagamentoGateway implements IPagamentoGateway {
     return this.pagamentoRepository.createAsync(pagamento);
   }
 
-  findByIdAsync(idPedido: number): Promise<Pagamento> {
-    return this.pagamentoRepository.findByIdAsync(idPedido);
+  async findByIdPedidoAsync(idPedido: number): Promise<Pagamento> {
+    const pagamento = await this.pagamentoRepository.findByIdPedidoAsync(
+      idPedido
+    );
+
+    if (!pagamento) {
+      throw new RegistroNaoEncontradoError();
+    }
+
+    return pagamento;
   }
 
-  updateStatusAsync(idPedido: number, status: string): Promise<Pagamento> {
-    return this.pagamentoRepository.updateStatusAsync(idPedido, status);
+  async updateStatusAsync(
+    idPedido: number,
+    status: string
+  ): Promise<Pagamento> {
+    const pagamento = await this.pagamentoRepository.updateStatusAsync(
+      idPedido,
+      status
+    );
+
+    if (!pagamento) {
+      throw new RegistroNaoEncontradoError();
+    }
+
+    return pagamento;
   }
 }

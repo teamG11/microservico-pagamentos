@@ -1,10 +1,9 @@
 import { ApiError } from "@/Application/errors/ApiError";
-import { env } from "@/Infrastructure/env";
 import { mercadoPagoPagamentos } from "@/Infrastructure/lib/mercadoPago";
 import { IMercadoPagoService } from "@/Interfaces/Services/IMercadoPagoService";
 import { PaymentResponse } from "mercadopago/dist/clients/payment/commonTypes";
 import { PaymentCreateData } from "mercadopago/dist/clients/payment/create/types";
-import { v4 as uuidv4 } from "uuid";
+import { v4 } from "uuid";
 
 export default class MercadoPagoService implements IMercadoPagoService {
   async createAsync(valor: number, idPedido: number): Promise<PaymentResponse> {
@@ -12,7 +11,7 @@ export default class MercadoPagoService implements IMercadoPagoService {
       body: {
         transaction_amount: valor,
         description: "Pedido de lanche nro " + idPedido,
-        payment_method_id: env.NODE_ENV == "dev" ? "pix" : "Pix",
+        payment_method_id: "pix",
         external_reference: idPedido.toString(),
         payer: {
           email: "financeiro@lanchonete.com",
@@ -22,7 +21,7 @@ export default class MercadoPagoService implements IMercadoPagoService {
           },
         },
       },
-      requestOptions: { idempotencyKey: uuidv4() },
+      requestOptions: { idempotencyKey: v4() },
     };
 
     const paymentResponse = await mercadoPagoPagamentos.create(request);
@@ -38,7 +37,7 @@ export default class MercadoPagoService implements IMercadoPagoService {
     const response = await mercadoPagoPagamentos.get({
       id: paymentId,
       requestOptions: {
-        idempotencyKey: uuidv4(),
+        idempotencyKey: v4(),
       },
     });
 

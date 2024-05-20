@@ -1,5 +1,5 @@
 import PagamentoRepository from "@/Infrastructure/drivers/Repositories/PagamentoRepository";
-import MercadoPagoService from "@/Infrastructure/drivers/Services/MercadoPagoServices";
+import MercadoPagoService from "@/Infrastructure/drivers/Services/MercadoPagoService";
 import { PagamentoController } from "@/Interfaces/Controllers/PagamentoController";
 import { Router } from "express";
 

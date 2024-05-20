@@ -21,7 +21,7 @@ export class AtualizaSituacaoPagamentoUseCase {
       throw new RegistroNaoEncontradoError();
     }
 
-    const pagamento = await this.pagamentoGateway.findByIdAsync(
+    const pagamento = await this.pagamentoGateway.findByIdPedidoAsync(
       parseInt(paymentResponse.external_reference)
     );
 
