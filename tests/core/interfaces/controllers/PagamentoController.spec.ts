@@ -1,7 +1,7 @@
 import { Pagamento } from "@/Domain/Entities/Pagamento";
 import { StatusPagamento } from "@/Domain/Enums/StatusPagamento";
 import PagamentoRepositoryTest from "@/Infrastructure/drivers/Repositories/TestRepositories/PagamentoRepositoryTest";
-import MercadoPagoServicesTest from "@/Infrastructure/drivers/Services/TestServices/MercadoPagoServicesTest";
+import MercadoPagoServicesTest from "@/Infrastructure/drivers/Services/TestServices/MercadoPagoServiceTest";
 import { env } from "@/Infrastructure/env";
 import { PagamentoController } from "@/Interfaces/Controllers/PagamentoController";
 import { Request, Response } from "express";
