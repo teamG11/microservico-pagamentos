@@ -4,20 +4,14 @@ import { Pagamento } from "@/Domain/Entities/Pagamento";
 import { prisma } from "@/Infrastructure/lib/prisma";
 import { IPagamentoRepository } from "@/Interfaces/Repositories/IPagamentoRepository";
 
-export default class pagamentoRepository implements IPagamentoRepository {
-  async createAsync(data: Pagamento): Promise<Pagamento> {
-    if (!data.paymentId || !data.paymentStatus) {
+export default class PagamentoRepository implements IPagamentoRepository {
+  async createAsync(pagamento: Pagamento): Promise<Pagamento> {
+    if (!pagamento.paymentId || !pagamento.paymentStatus) {
       throw new DadosInvalidosError();
     }
 
     const createdPagamento = await prisma.pagamento.create({
-      data: {
-        idPedido: data.idPedido,
-        valor: data.valor,
-        paymentId: data.paymentId,
-        paymentStatus: data.paymentStatus,
-        responsePayload: JSON.stringify(data.responsePayload),
-      },
+      data: pagamento,
     });
 
     createdPagamento.responsePayload = JSON.parse(
@@ -27,14 +21,10 @@ export default class pagamentoRepository implements IPagamentoRepository {
     return createdPagamento;
   }
 
-  async findByIdAsync(idPedido: number): Promise<Pagamento> {
+  async findByIdPedidoAsync(idPedido: number): Promise<Pagamento | null> {
     const pagamento = await prisma.pagamento.findUnique({
       where: { idPedido: idPedido },
     });
-
-    if (!pagamento) {
-      throw new RegistroNaoEncontradoError();
-    }
 
     return pagamento;
   }
@@ -42,7 +32,7 @@ export default class pagamentoRepository implements IPagamentoRepository {
   async updateStatusAsync(
     idPedido: number,
     status: string
-  ): Promise<Pagamento> {
+  ): Promise<Pagamento | null> {
     const pagamento = await prisma.pagamento.findUnique({
       where: { idPedido: idPedido },
     });

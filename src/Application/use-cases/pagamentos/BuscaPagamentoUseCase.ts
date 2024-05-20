@@ -18,7 +18,7 @@ export class BuscaPagamentoUseCase {
   ) {}
 
   async executarAsync({ idPedido }: IRequest): Promise<IResponse> {
-    let pagamento = await this.pagamentoGateway.findByIdAsync(idPedido);
+    let pagamento = await this.pagamentoGateway.findByIdPedidoAsync(idPedido);
 
     const paymentResponse = await this.mercadoPagoGateway.findByIdAsync(
       pagamento.paymentId
