@@ -33,6 +33,8 @@ export default class PagamentoRepositoryTest implements IPagamentoRepository {
 
     this.pagamentos.push(pagamento);
 
+    pagamento.id = "123";
+
     return pagamento;
   }
 

@@ -25,6 +25,8 @@ describe("ClienteGateway", () => {
 
       const result = await pagamentoGateway.createAsync(pagamento);
 
+      pagamento.id = "123";
+
       expect(result).toEqual(pagamento);
       expect(pagamentoRepository.pagamentos).toContainEqual(pagamento);
     });

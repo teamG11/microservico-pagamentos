@@ -47,7 +47,10 @@ class PagamentoController {
 
   async buscarPorId(request: Request, response: Response, next: NextFunction) {
     try {
-      const paramsSchema = z.object({ id_pedido: z.number() });
+      const paramsSchema = z.object({
+        id_pedido: z.string().transform((idPedido) => Number(idPedido)),
+      });
+
       const { id_pedido: idPedido } = paramsSchema.parse(request.params);
 
       const buscarPedido = BuscaPagamentoUseCaseFactory(
@@ -79,7 +82,7 @@ class PagamentoController {
           type: z.string(),
           user_id: z.number(),
         })
-        .parse(request.params);
+        .parse(request.body);
 
       // Só trataremos os retornos de pagamento
       if (action != "payment.update" && type != "payment") {
