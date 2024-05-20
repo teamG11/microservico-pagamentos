@@ -33,7 +33,7 @@ describe("CriaPagamentoUseCase", () => {
         status: StatusPagamento.aguardando,
         transaction_amount: 5.5,
         description: "Pedido de lanche nro 111",
-        payment_method_id: "Pix",
+        payment_method_id: "pix",
         external_reference: "111",
         payer: {
           email: "financeiro@lanchonete.com",
