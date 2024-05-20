@@ -1,6 +1,5 @@
 import { StatusPagamento } from "@/Domain/Enums/StatusPagamento";
 import MercadoPagoService from "@/Infrastructure/drivers/Services/MercadoPagoService";
-import { env } from "@/Infrastructure/env";
 import { mercadoPagoPagamentos } from "@/Infrastructure/lib/mercadoPago";
 import { PaymentResponse } from "mercadopago/dist/clients/payment/commonTypes";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -26,7 +25,7 @@ describe("MercadoPagoGateway", () => {
       id: 222,
       transaction_amount: 5.5,
       description: "Pedido de lanche nro 111",
-      payment_method_id: env.NODE_ENV == "dev" ? "pix" : "Pix",
+      payment_method_id: "pix",
       external_reference: "111",
       status: StatusPagamento.aguardando,
       payer: {
@@ -50,7 +49,7 @@ describe("MercadoPagoGateway", () => {
       id: 222,
       transaction_amount: 5.5,
       description: "Pedido de lanche nro 111",
-      payment_method_id: env.NODE_ENV == "dev" ? "pix" : "Pix",
+      payment_method_id: "pix",
       external_reference: "111",
       status: StatusPagamento.aguardando,
       payer: {

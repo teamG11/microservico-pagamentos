@@ -2,7 +2,6 @@ import { Pagamento } from "@/Domain/Entities/Pagamento";
 import { StatusPagamento } from "@/Domain/Enums/StatusPagamento";
 import PagamentoRepositoryTest from "@/Infrastructure/drivers/Repositories/TestRepositories/PagamentoRepositoryTest";
 import MercadoPagoServicesTest from "@/Infrastructure/drivers/Services/TestServices/MercadoPagoServiceTest";
-import { env } from "@/Infrastructure/env";
 import { PagamentoController } from "@/Interfaces/Controllers/PagamentoController";
 import { Request, Response } from "express";
 import { PaymentResponse } from "mercadopago/dist/clients/payment/commonTypes";
@@ -77,7 +76,7 @@ describe("PagamentoController", () => {
         id: 222,
         transaction_amount: 5.5,
         description: "Pedido de lanche nro 111",
-        payment_method_id: env.NODE_ENV == "dev" ? "pix" : "Pix",
+        payment_method_id: "pix",
         external_reference: "111",
         payer: {
           email: "financeiro@lanchonete.com",
@@ -143,7 +142,7 @@ describe("PagamentoController", () => {
         id: 222,
         transaction_amount: 5.5,
         description: "Pedido de lanche nro 111",
-        payment_method_id: env.NODE_ENV == "dev" ? "pix" : "Pix",
+        payment_method_id: "pix",
         external_reference: "111",
         payer: {
           email: "financeiro@lanchonete.com",
