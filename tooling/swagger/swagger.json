@@ -4,10 +4,10 @@
     "version": "1.0.0",
     "description": "Projeto relacionado a especialização em Arquitetura de Software na FIAP"
   },
-  "host": "localhost:7000",
+  "host": "localhost:7003",
   "servers": [
     {
-      "url": "http://localhost:7000"
+      "url": "http://localhost:7003"
     }
   ],
   "basePath": "/",

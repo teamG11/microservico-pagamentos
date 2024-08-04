@@ -29,7 +29,7 @@ COPY --chown=node:node . .
 
 RUN npm run build
 
-ENV NODE_ENV production-pagamentos
+ENV NODE_ENV production
 
 # RUN npm run prisma:generate
 
