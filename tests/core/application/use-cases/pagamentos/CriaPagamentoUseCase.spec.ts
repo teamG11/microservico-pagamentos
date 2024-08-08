@@ -3,22 +3,27 @@ import { Pagamento } from "@/Domain/Entities/Pagamento";
 import { StatusPagamento } from "@/Domain/Enums/StatusPagamento";
 import PagamentoRepositoryTest from "@/Infrastructure/drivers/Repositories/TestRepositories/PagamentoRepositoryTest";
 import MercadoPagoServiceTest from "@/Infrastructure/drivers/Services/TestServices/MercadoPagoServiceTest";
+import PedidoQueueTest from "@/Infrastructure/drivers/Services/TestServices/PedidoQueueTest";
 import MercadoPagoGateway from "@/Interfaces/Gateways/External/MercadoPagoGateway";
 import PagamentoGateway from "@/Interfaces/Gateways/PagamentoGateway";
 import { beforeEach, describe, expect, it } from "vitest";
 
+let mercadoPagoGateway: MercadoPagoGateway;
+let pagamentoGateway: PagamentoGateway;
+let pedidoQueue: PedidoQueueTest;
 let useCase: CriaPagamentoUseCase;
 
 describe("CriaPagamentoUseCase", () => {
   beforeEach(() => {
-    const mercadoPagoGateway = new MercadoPagoGateway(
-      new MercadoPagoServiceTest()
-    );
-    const pagamentoGateway = new PagamentoGateway(
-      new PagamentoRepositoryTest()
-    );
+    mercadoPagoGateway = new MercadoPagoGateway(new MercadoPagoServiceTest());
+    pagamentoGateway = new PagamentoGateway(new PagamentoRepositoryTest());
+    pedidoQueue = new PedidoQueueTest();
 
-    useCase = new CriaPagamentoUseCase(mercadoPagoGateway, pagamentoGateway);
+    useCase = new CriaPagamentoUseCase(
+      mercadoPagoGateway,
+      pagamentoGateway,
+      pedidoQueue
+    );
   });
 
   it("Deve permitir cadastrar pagamento", async () => {
