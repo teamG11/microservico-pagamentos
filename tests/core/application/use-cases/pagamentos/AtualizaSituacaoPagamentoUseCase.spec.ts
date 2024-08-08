@@ -4,22 +4,26 @@ import { Pagamento } from "@/Domain/Entities/Pagamento";
 import { StatusPagamento } from "@/Domain/Enums/StatusPagamento";
 import PagamentoRepositoryTest from "@/Infrastructure/drivers/Repositories/TestRepositories/PagamentoRepositoryTest";
 import MercadoPagoServiceTest from "@/Infrastructure/drivers/Services/TestServices/MercadoPagoServiceTest";
+import PedidoQueueTest from "@/Infrastructure/drivers/Services/TestServices/PedidoQueueTest";
 import MercadoPagoGateway from "@/Interfaces/Gateways/External/MercadoPagoGateway";
 import PagamentoGateway from "@/Interfaces/Gateways/PagamentoGateway";
 import { beforeEach, describe, expect, it } from "vitest";
 
 let mercadoPagoGateway: MercadoPagoGateway;
 let pagamentoGateway: PagamentoGateway;
+let pedidoQueue: PedidoQueueTest;
 let useCase: AtualizaSituacaoPagamentoUseCase;
 
 describe("BuscaPagamentoUseCase", () => {
   beforeEach(() => {
     mercadoPagoGateway = new MercadoPagoGateway(new MercadoPagoServiceTest());
     pagamentoGateway = new PagamentoGateway(new PagamentoRepositoryTest());
+    pedidoQueue = new PedidoQueueTest();
 
     useCase = new AtualizaSituacaoPagamentoUseCase(
       mercadoPagoGateway,
-      pagamentoGateway
+      pagamentoGateway,
+      pedidoQueue
     );
   });
 

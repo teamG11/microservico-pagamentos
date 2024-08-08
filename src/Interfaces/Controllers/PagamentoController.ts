@@ -1,48 +1,54 @@
 import { AtualizaSituacaoPagamentoUseCaseFactory } from "@/Application/use-cases-factories/pagamentos/AtualizaSituacaoPagamentoUseCaseFactory";
 import { BuscaPagamentoUseCaseFactory } from "@/Application/use-cases-factories/pagamentos/BuscaPagamentoUseCaseFactory";
 import { CriaPagamentoUseCaseFactory } from "@/Application/use-cases-factories/pagamentos/CriaPagamentoUseCaseFactory";
+import { StatusPagamento } from "@/Domain/Enums/StatusPagamento";
+import { StatusPedido } from "@/Domain/Enums/StatusPedido";
 import { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import MercadoPagoGateway from "../Gateways/External/MercadoPagoGateway";
 import PagamentoGateway from "../Gateways/PagamentoGateway";
 import { IPagamentoRepository } from "../Repositories/IPagamentoRepository";
 import { IMercadoPagoService } from "../Services/IMercadoPagoService";
+import { IPedidoQueue } from "../Services/IPedidoQueue";
 
 class PagamentoController {
   constructor(
     private mercadoPagoService: IMercadoPagoService,
-    private pagamentoRepository: IPagamentoRepository
+    private pagamentoRepository: IPagamentoRepository,
+    private pedidoQueue: IPedidoQueue
   ) {}
 
-  async criar(request: Request, response: Response, next: NextFunction) {
+  async criar(idPedido: number, valor: number) {
+    let status = StatusPedido.recebido;
+    let statusPagamento = StatusPagamento.aguardando;
+
     try {
-      const dados = request.body;
-
-      const createBodySchema = z.object({
-        id_pedido: z.number(),
-        valor: z.number(),
-      });
-
-      const { id_pedido: idPedido, valor } = createBodySchema.parse(dados);
-
       const criaPagamento = CriaPagamentoUseCaseFactory(
         new MercadoPagoGateway(this.mercadoPagoService),
-        new PagamentoGateway(this.pagamentoRepository)
+        new PagamentoGateway(this.pagamentoRepository),
+        this.pedidoQueue
       );
 
-      const { pagamento } = await criaPagamento.executarAsync({
+      await criaPagamento.executarAsync({
         idPedido,
         valor,
       });
 
-      return response.status(201).json({
-        id: pagamento.id,
-        pagamento: pagamento,
-        payload: JSON.parse(pagamento.responsePayload),
+      this.pedidoQueue.sendPedidoMessage({
+        id: idPedido.toString(),
+        status: StatusPedido.recebido,
+        statusPagamento: StatusPagamento.aguardando,
       });
     } catch (error) {
-      next(error);
+      status = StatusPedido.recebido;
+      statusPagamento = StatusPagamento.recusado;
     }
+
+    this.pedidoQueue.sendPedidoMessage({
+      id: idPedido.toString(),
+      status: status,
+      statusPagamento: statusPagamento,
+    });
   }
 
   async buscarPorId(request: Request, response: Response, next: NextFunction) {
@@ -86,7 +92,8 @@ class PagamentoController {
 
       const atualizaSituacaoPagamento = AtualizaSituacaoPagamentoUseCaseFactory(
         new MercadoPagoGateway(this.mercadoPagoService),
-        new PagamentoGateway(this.pagamentoRepository)
+        new PagamentoGateway(this.pagamentoRepository),
+        this.pedidoQueue
       );
 
       await atualizaSituacaoPagamento.executarAsync({ paymentId: id });
