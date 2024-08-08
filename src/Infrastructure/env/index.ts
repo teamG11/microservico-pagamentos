@@ -7,6 +7,10 @@ const envSchema = z.object({
   DATABASE_URL: z.string(),
   TOKEN_MERCADO_PAGO_DEV: z.string(),
   MICROSERVICO_OPERACAO_URL: z.string().url(),
+  AWS_REGION: z.string(),
+  AWS_ENDPOINT: z.string(),
+  PEDIDO_QUEUE_URL: z.string(),
+  PAGAMENTO_QUEUE_URL: z.string(),
 });
 
 const _env = envSchema.safeParse(process.env);
