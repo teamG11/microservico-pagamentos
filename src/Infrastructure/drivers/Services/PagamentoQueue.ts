@@ -7,7 +7,7 @@ import PedidoQueue from "./PedidoQueue";
 
 const sqs = new AWS.SQS({
   region: env.AWS_REGION,
-  endpoint: env.AWS_ENDPOINT,
+  endpoint: "http://localstack:4566",
 });
 
 const queueUrl = env.PAGAMENTO_QUEUE_URL;

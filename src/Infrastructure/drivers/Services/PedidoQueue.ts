@@ -8,7 +8,7 @@ import AWS from "aws-sdk";
 export default class PedidoQueue implements IPedidoQueue {
   private sqs = new AWS.SQS({
     region: env.AWS_REGION,
-    endpoint: env.AWS_ENDPOINT,
+    endpoint: "http://localstack:4566",
   });
 
   async sendPedidoMessage(pedidoMessage: IPedidoMessage): Promise<void> {

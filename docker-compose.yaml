@@ -12,7 +12,13 @@ services:
       NODE_ENV: dev
       DATABASE_URL: mongodb+srv://lanchonete:lanchonete@pagamentos.djvoood.mongodb.net/pagamentos?retryWrites=true&w=majority&appName=pagamentos
       TOKEN_MERCADO_PAGO_DEV: TEST-3012597545599426-051414-ffccb6c232ef1ade75243761b1e67a39-73897475
-      MICROSERVICO_OPERACAO_URL: http://localhost:7002
+      MICROSERVICO_OPERACAO_URL: http://app-operacoes:7002
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_REGION: us-east-1
+      AWS_ENDPOINT: http://localstack:4566
+      PEDIDO_QUEUE_URL: http://localstack:4566/000000000000/pedido-queue
+      PAGAMENTO_QUEUE_URL: http://localstack:4566/000000000000/pagamento-queue
     ports:
       - 7003:7003
     # command: sh -c "npx prisma migrate deploy && npm run dev"
@@ -30,4 +36,4 @@ services:
 
 networks:
     default:
-        name: lanchonete-pagamentos-network
+        name: lanchonete-network
