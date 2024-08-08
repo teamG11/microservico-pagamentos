@@ -1,27 +1,27 @@
 import { env } from "@/Infrastructure/env";
+import {
+  IPedidoMessage,
+  IPedidoQueue,
+} from "@/Interfaces/Services/IPedidoQueue";
 import AWS from "aws-sdk";
 
-const sqs = new AWS.SQS({
-  region: env.AWS_REGION,
-  endpoint: env.AWS_ENDPOINT,
-});
+export default class PedidoQueue implements IPedidoQueue {
+  private sqs = new AWS.SQS({
+    region: env.AWS_REGION,
+    endpoint: env.AWS_ENDPOINT,
+  });
 
-interface PedidoMessage {
-  id: string;
-  status: string;
-  statusPagamento: string;
-}
+  async sendPedidoMessage(pedidoMessage: IPedidoMessage): Promise<void> {
+    const params: AWS.SQS.SendMessageRequest = {
+      QueueUrl: env.PEDIDO_QUEUE_URL,
+      MessageBody: JSON.stringify(pedidoMessage),
+    };
 
-export const sendPedidoMessage = async (pedidoMessage: PedidoMessage) => {
-  const params: AWS.SQS.SendMessageRequest = {
-    QueueUrl: env.PEDIDO_QUEUE_URL,
-    MessageBody: JSON.stringify(pedidoMessage),
-  };
-
-  try {
-    const data = await sqs.sendMessage(params).promise();
-    console.log("Order message sent successfully:", data.MessageId);
-  } catch (error) {
-    console.error("Error sending order message:", error);
+    try {
+      const data = await this.sqs.sendMessage(params).promise();
+      console.log("Order message sent successfully:", data.MessageId);
+    } catch (error) {
+      console.error("Error sending order message:", error);
+    }
   }
-};
+}

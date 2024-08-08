@@ -1,6 +1,9 @@
 import { RegistroNaoEncontradoError } from "@/Application/errors/RegistroNaoEncontradoError";
+import { StatusPagamento } from "@/Domain/Enums/StatusPagamento";
+import { StatusPedido } from "@/Domain/Enums/StatusPedido";
 import { IMercadoPagoGateway } from "@/Interfaces/Gateways/External/MercadoPagoGateway";
 import { IPagamentoGateway } from "@/Interfaces/Gateways/PagamentoGateway";
+import { IPedidoQueue } from "@/Interfaces/Services/IPedidoQueue";
 
 interface IRequest {
   paymentId: number;
@@ -9,7 +12,8 @@ interface IRequest {
 export class AtualizaSituacaoPagamentoUseCase {
   constructor(
     private mercadoPagoGateway: IMercadoPagoGateway,
-    private pagamentoGateway: IPagamentoGateway
+    private pagamentoGateway: IPagamentoGateway,
+    private pedidoQueue: IPedidoQueue
   ) {}
 
   async executarAsync({ paymentId }: IRequest): Promise<void> {
@@ -29,6 +33,18 @@ export class AtualizaSituacaoPagamentoUseCase {
     if (paymentResponse.status != "") {
       const { idPedido, paymentStatus } = pagamento;
       await this.pagamentoGateway.updateStatusAsync(idPedido, paymentStatus);
+
+      this.pedidoQueue.sendPedidoMessage({
+        id: idPedido.toString(),
+        status:
+          paymentStatus == "approved"
+            ? StatusPedido.em_preparacao
+            : StatusPedido.recebido,
+        statusPagamento:
+          paymentStatus == "approved"
+            ? StatusPagamento.recebido
+            : StatusPagamento.recusado,
+      });
     }
   }
 }

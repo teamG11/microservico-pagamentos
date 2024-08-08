@@ -3,6 +3,7 @@ import { PagamentoController } from "@/Interfaces/Controllers/PagamentoControlle
 import AWS from "aws-sdk";
 import PagamentoRepository from "../Repositories/PagamentoRepository";
 import MercadoPagoService from "./MercadoPagoService";
+import PedidoQueue from "./PedidoQueue";
 
 const sqs = new AWS.SQS({
   region: env.AWS_REGION,
@@ -19,7 +20,8 @@ interface PagamentoMessage {
 
 const pagamentoController = new PagamentoController(
   new MercadoPagoService(),
-  new PagamentoRepository()
+  new PagamentoRepository(),
+  new PedidoQueue()
 );
 
 const processMessages = async () => {
@@ -48,7 +50,7 @@ const processMessages = async () => {
             `id_pedido: ${id_pedido}, id_cliente: ${id_cliente}, valor_final: ${valor_final}`
           );
 
-          await pagamentoController.criar();
+          await pagamentoController.criar(id_pedido, valor_final);
 
           // Delete the message after processing
           await sqs
